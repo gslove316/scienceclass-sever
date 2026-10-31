@@ -1,0 +1,13 @@
+{
+  "name": "erim-science-class-server",
+  "version": "1.0.0",
+  "description": "애림쌤의 신나는 과학교실 — 서버(API) 기반 중학교 과학 학습 포털",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js"
+  },
+  "engines": {
+    "node": ">=18"
+  },
+  "license": "MIT"
+}

@@ -1,0 +1,15 @@
+services:
+  - type: web
+    name: erim-science-class
+    runtime: node
+    rootDir: server
+    plan: free
+    buildCommand: ""
+    startCommand: node server.js
+    envVars:
+      - key: DATA_DIR
+        value: /var/data
+    disk:
+      name: erim-data
+      mountPath: /var/data
+      sizeGB: 1
