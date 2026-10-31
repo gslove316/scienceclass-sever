@@ -8,8 +8,4 @@ services:
     startCommand: node server.js
     envVars:
       - key: DATA_DIR
-        value: /var/data
-    disk:
-      name: erim-data
-      mountPath: /var/data
-      sizeGB: 1
+        value: /opt/render/project/src/server/data
