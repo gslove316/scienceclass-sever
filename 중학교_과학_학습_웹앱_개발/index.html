@@ -1,0 +1,1029 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>애림쌤의 중학교 과학 교실</title>
+<meta name="description" content="애림쌤의 중학교 과학 교실 — 1·2·3학년 과학을 물리·화학·지구과학·생물 분야별로 공부하는 학습 포털">
+<style>
+/* ============================================================
+   디자인 시스템
+   - 밝은 테마 (흰색/하늘색 배경)
+   - 액센트: 과학적인 청록(teal)·딥블루
+   - 분야별 색상 코딩: 물리(남색) 화학(주황) 지구과학(보라) 생물(초록)
+   - 글씨: 굵고 선명 (사용자 요청 — 가시성 최우선)
+   ============================================================ */
+:root{
+  color-scheme: light;
+  --bg:        #f0f7ff;
+  --bg-grad-1: #e8f4ff;
+  --bg-grad-2: #f4f9ff;
+  --surface:   #ffffff;
+  --surface-2: #f3f8fe;
+  --ink:       #0f2744;   /* 본문 — 진하고 선명 */
+  --ink-soft:  #35507a;   /* 보조 텍스트 */
+  --ink-mute:  #5b7399;
+  --line:      #d4e4f7;
+  --brand:     #0ea5a3;   /* teal */
+  --brand-ink: #065f5e;
+  --brand-deep:#0b6ea8;   /* deep blue */
+  --accent:    #1d4ed8;
+  /* 분야별 */
+  --f-physics: #2563eb;
+  --f-physics-bg:#e7efff;
+  --f-chem:    #ea7a16;
+  --f-chem-bg: #fff0df;
+  --f-earth:   #7c3aed;
+  --f-earth-bg:#f1e9ff;
+  --f-bio:     #16a34a;
+  --f-bio-bg:  #e3f8ea;
+  --f-all:     #0ea5a3;
+  --f-all-bg:  #dff6f5;
+  --danger:    #dc2626;
+  --radius:    16px;
+  --shadow:    0 10px 30px rgba(16,55,100,.10);
+  --shadow-sm: 0 4px 14px rgba(16,55,100,.08);
+  --focus:     #0b6ea8;
+}
+*{box-sizing:border-box}
+html,body{margin:0}
+body{
+  background:
+    radial-gradient(1200px 500px at 80% -10%, #d6ecff 0%, transparent 55%),
+    radial-gradient(900px 500px at 0% 0%, #e3fbf8 0%, transparent 50%),
+    linear-gradient(180deg, var(--bg-grad-1), var(--bg-grad-2));
+  background-attachment: fixed;
+  color: var(--ink);
+  font: 16px/1.6 "Pretendard", "Noto Sans KR", -apple-system, BlinkMacSystemFont, system-ui, sans-serif;
+  -webkit-font-smoothing: antialiased;
+  min-height: 100dvh;
+  font-weight: 600;            /* 전반적으로 굵게 */
+}
+button,input,select,textarea{font:inherit;color:inherit}
+button{cursor:pointer}
+a{color:inherit}
+:focus-visible{outline:3px solid var(--focus);outline-offset:3px;border-radius:6px}
+.sr-only{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0,0,0,0);border:0}
+.hidden{display:none !important}
+
+/* ---------- Header ---------- */
+header{
+  position:sticky;top:0;z-index:40;
+  background:rgba(255,255,255,.82);
+  backdrop-filter:saturate(1.3) blur(10px);
+  border-bottom:1px solid var(--line);
+}
+nav{
+  max-width:1180px;margin:auto;
+  display:flex;align-items:center;justify-content:space-between;gap:14px;
+  padding:14px 24px;
+}
+.brand{display:flex;align-items:center;gap:12px;font-size:20px;font-weight:900;letter-spacing:-.4px;color:var(--ink)}
+.brand .logo{
+  width:46px;height:46px;flex:none;display:grid;place-items:center;border-radius:13px;
+  background:linear-gradient(135deg,var(--brand),var(--brand-deep));
+  box-shadow:var(--shadow-sm);
+}
+.brand .logo svg{width:28px;height:28px}
+.brand small{display:block;font-size:12px;font-weight:700;color:var(--ink-mute);letter-spacing:.5px;margin-top:1px}
+.nav-actions{display:flex;align-items:center;gap:8px}
+
+/* 버튼 공통 */
+.btn{
+  display:inline-flex;align-items:center;gap:8px;justify-content:center;
+  border:2px solid var(--line);border-radius:12px;
+  padding:10px 16px;background:var(--surface);color:var(--ink);
+  font-weight:800;font-size:15px;transition:transform .15s,background .15s,border-color .15s,box-shadow .15s;
+}
+.btn:hover{background:var(--surface-2);border-color:#b9d4f0}
+.btn:active{transform:translateY(1px)}
+.btn.primary{
+  background:linear-gradient(135deg,var(--brand),var(--brand-deep));
+  border-color:transparent;color:#fff;box-shadow:var(--shadow-sm);
+}
+.btn.primary:hover{filter:brightness(1.06)}
+.btn.ghost{background:transparent;border-color:transparent}
+.btn.ghost:hover{background:var(--surface-2)}
+.btn.danger{color:var(--danger);border-color:#f3c8c8;background:#fff}
+.btn.danger:hover{background:#fdeaea}
+.btn.sm{padding:7px 12px;font-size:14px;border-radius:10px}
+.btn svg{width:18px;height:18px;flex:none}
+.btn:disabled{opacity:.45;cursor:not-allowed}
+
+/* 자물쇠 아이콘 버튼 */
+#lockBtn{
+  width:46px;height:46px;padding:0;border-radius:13px;
+  display:grid;place-items:center;border:2px solid var(--line);background:var(--surface);
+}
+#lockBtn svg{width:22px;height:22px;color:var(--brand-deep)}
+#lockBtn:hover{border-color:var(--brand);background:#eafaf9}
+#lockBtn.admin-on{background:linear-gradient(135deg,var(--brand),var(--brand-deep));border-color:transparent}
+#lockBtn.admin-on svg{color:#fff}
+
+main{max-width:1180px;margin:auto;padding:28px 24px 72px}
+
+/* ---------- Hero ---------- */
+.hero{
+  position:relative;overflow:hidden;
+  border-radius:26px;border:1px solid #cfe6ff;
+  background:
+    radial-gradient(700px 320px at 92% 0%, #cdeaff 0%, transparent 60%),
+    linear-gradient(135deg,#ffffff 0%,#eaf5ff 60%,#e4fbf7 100%);
+  padding:46px 46px;box-shadow:var(--shadow);
+  margin-bottom:34px;
+}
+.hero-text{position:relative;z-index:2;max-width:640px}
+.eyebrow{
+  display:inline-flex;align-items:center;gap:8px;
+  font-size:13px;font-weight:900;letter-spacing:2px;color:var(--brand-ink);
+  background:#d6f5f2;border:1px solid #a9e5e0;border-radius:999px;padding:6px 14px;
+}
+.eyebrow svg{width:16px;height:16px}
+.hero h1{
+  font-size:clamp(30px,4.4vw,46px);line-height:1.22;letter-spacing:-1.2px;
+  margin:18px 0 12px;font-weight:900;color:var(--ink);text-wrap:balance;
+}
+.hero h1 em{font-style:normal;background:linear-gradient(120deg,var(--brand),var(--brand-deep));-webkit-background-clip:text;background-clip:text;color:transparent}
+.hero p{font-size:17px;font-weight:700;color:var(--ink-soft);margin:0 0 22px;max-width:560px}
+.hero-pills{display:flex;gap:10px;flex-wrap:wrap}
+.hero-pills span{
+  font-size:13px;font-weight:800;color:var(--brand-ink);
+  background:rgba(255,255,255,.75);border:1px solid #bfe7e2;border-radius:999px;padding:7px 14px;
+}
+.hero-art{position:absolute;right:28px;top:50%;transform:translateY(-50%);width:300px;height:300px;z-index:1;pointer-events:none}
+
+/* ---------- 섹션 공통 ---------- */
+.step-head{display:flex;align-items:baseline;gap:12px;margin:0 0 14px}
+.step-num{
+  font-size:13px;font-weight:900;letter-spacing:1px;color:#fff;
+  background:var(--brand-deep);border-radius:8px;padding:3px 9px;flex:none;
+}
+.step-head h2{font-size:19px;font-weight:900;letter-spacing:-.3px;margin:0;color:var(--ink)}
+.block{margin-bottom:30px}
+
+/* 학년 선택 */
+.grade-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:16px}
+.grade-btn{
+  position:relative;text-align:left;border:2px solid var(--line);border-radius:18px;
+  background:var(--surface);padding:22px 22px;box-shadow:var(--shadow-sm);
+  transition:transform .16s,border-color .16s,box-shadow .16s;overflow:hidden;
+}
+.grade-btn:hover{transform:translateY(-3px);border-color:var(--brand)}
+.grade-btn .gtag{display:block;font-size:12px;font-weight:900;letter-spacing:1.5px;color:var(--brand-deep);margin-bottom:6px}
+.grade-btn .gname{font-size:26px;font-weight:900;letter-spacing:-.5px;color:var(--ink);display:flex;align-items:center;gap:10px}
+.grade-btn .gicon{width:42px;height:42px;border-radius:12px;display:grid;place-items:center;flex:none}
+.grade-btn .gdesc{font-size:13px;font-weight:700;color:var(--ink-mute);margin-top:8px}
+.grade-btn[data-grade="1"] .gicon{background:#e7efff;color:var(--f-physics)}
+.grade-btn[data-grade="2"] .gicon{background:#fff0df;color:var(--f-chem)}
+.grade-btn[data-grade="3"] .gicon{background:#e3f8ea;color:var(--f-bio)}
+.grade-btn .gicon svg{width:24px;height:24px}
+.grade-btn.selected{
+  border-color:var(--brand);background:linear-gradient(135deg,#eafaf9,#e3f1ff);
+  box-shadow:0 8px 22px rgba(14,165,163,.22);
+}
+.grade-btn.selected::after{content:"✓";position:absolute;top:14px;right:16px;color:var(--brand-deep);font-weight:900;font-size:20px}
+
+/* 분야 선택 */
+.field-grid{display:flex;flex-wrap:wrap;gap:10px}
+.field-btn{
+  display:inline-flex;align-items:center;gap:8px;
+  border:2px solid var(--line);border-radius:999px;background:var(--surface);
+  padding:10px 18px;font-weight:800;font-size:15px;color:var(--ink-soft);
+  transition:transform .14s,background .14s,border-color .14s,color .14s;
+}
+.field-btn svg{width:18px;height:18px}
+.field-btn:hover:not(:disabled){transform:translateY(-2px)}
+.field-btn:disabled{opacity:.45;cursor:not-allowed}
+.field-btn[data-field=""]{color:var(--f-all);border-color:#a9e5e0}
+.field-btn[data-field="물리"]{color:var(--f-physics);border-color:#b9ccf7}
+.field-btn[data-field="화학"]{color:var(--f-chem);border-color:#f3d2a6}
+.field-btn[data-field="지구과학"]{color:var(--f-earth);border-color:#d7c4f7}
+.field-btn[data-field="생물"]{color:var(--f-bio);border-color:#aee3bf}
+.field-btn.selected[data-field=""]{background:var(--f-all);color:#fff;border-color:var(--f-all)}
+.field-btn.selected[data-field="물리"]{background:var(--f-physics);color:#fff;border-color:var(--f-physics)}
+.field-btn.selected[data-field="화학"]{background:var(--f-chem);color:#fff;border-color:var(--f-chem)}
+.field-btn.selected[data-field="지구과학"]{background:var(--f-earth);color:#fff;border-color:var(--f-earth)}
+.field-btn.selected[data-field="생물"]{background:var(--f-bio);color:#fff;border-color:var(--f-bio)}
+
+/* 검색 / 툴바 */
+.toolbar{display:flex;gap:12px;align-items:center;flex-wrap:wrap;margin-bottom:8px}
+.search-wrap{position:relative;flex:1;min-width:220px}
+.search-wrap svg{position:absolute;left:14px;top:50%;transform:translateY(-50%);width:20px;height:20px;color:var(--ink-mute)}
+#search{
+  width:100%;padding:13px 16px 13px 44px;border:2px solid var(--line);border-radius:13px;
+  background:var(--surface);font-weight:700;font-size:16px;
+}
+#search::placeholder{color:var(--ink-mute);font-weight:600}
+#search:focus{border-color:var(--brand)}
+#search:disabled{opacity:.55}
+
+.list-head{display:flex;align-items:center;justify-content:space-between;gap:12px;margin:18px 0 4px}
+.list-head h2{font-size:20px;font-weight:900;margin:0;display:flex;align-items:center;gap:10px;color:var(--ink)}
+.count-pill{font-size:13px;font-weight:900;color:var(--brand-deep);background:#dff0ff;border-radius:999px;padding:3px 11px}
+.hint{font-size:14px;font-weight:700;color:var(--ink-mute);margin:6px 0 16px}
+
+/* 카드 그리드 */
+.cards{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:20px}
+.card{
+  position:relative;display:flex;flex-direction:column;
+  background:var(--surface);border:1px solid var(--line);border-top:5px solid var(--accent);
+  border-radius:var(--radius);padding:22px;box-shadow:var(--shadow-sm);
+  transition:transform .16s,box-shadow .16s;min-height:230px;overflow-wrap:anywhere;
+}
+.card:hover{transform:translateY(-4px);box-shadow:var(--shadow)}
+.card.f-physics{border-top-color:var(--f-physics)}
+.card.f-chem{border-top-color:var(--f-chem)}
+.card.f-earth{border-top-color:var(--f-earth)}
+.card.f-bio{border-top-color:var(--f-bio)}
+.card.f-all{border-top-color:var(--f-all)}
+.card-icon{width:46px;height:46px;border-radius:12px;display:grid;place-items:center;margin-bottom:14px;flex:none}
+.card-icon svg{width:26px;height:26px}
+.f-physics .card-icon{background:var(--f-physics-bg);color:var(--f-physics)}
+.f-chem    .card-icon{background:var(--f-chem-bg);color:var(--f-chem)}
+.f-earth   .card-icon{background:var(--f-earth-bg);color:var(--f-earth)}
+.f-bio     .card-icon{background:var(--f-bio-bg);color:var(--f-bio)}
+.f-all     .card-icon{background:var(--f-all-bg);color:var(--f-all)}
+.card .ctag{font-size:12px;font-weight:900;letter-spacing:.3px;color:var(--ink-mute)}
+.card .ctag b{color:var(--ink-soft)}
+.card h3{margin:6px 0 8px;font-size:19px;font-weight:900;line-height:1.35;letter-spacing:-.3px;color:var(--ink)}
+.card p{margin:0 0 18px;font-size:14px;font-weight:700;color:var(--ink-soft);flex:1;white-space:pre-wrap}
+.card .go{
+  display:flex;align-items:center;justify-content:center;gap:8px;
+  text-decoration:none;text-align:center;border-radius:11px;padding:12px;
+  font-weight:900;font-size:15px;color:#fff;margin-top:auto;
+  background:linear-gradient(135deg,var(--brand),var(--brand-deep));
+}
+.f-physics .go{background:linear-gradient(135deg,#3b82f6,#1d4ed8)}
+.f-chem    .go{background:linear-gradient(135deg,#f59e0b,#ea7a16)}
+.f-earth   .go{background:linear-gradient(135deg,#8b5cf6,#7c3aed)}
+.f-bio     .go{background:linear-gradient(135deg,#22c55e,#16a34a)}
+.card .go:hover{filter:brightness(1.07)}
+.card .go svg{width:17px;height:17px}
+
+/* 관리자 카드 조작 */
+.card-admin{display:flex;gap:8px;margin-top:10px}
+.card-admin .btn{flex:1;padding:8px;font-size:13px}
+.sort-row{display:flex;gap:6px;margin-bottom:12px}
+.sort-row .btn{padding:5px 10px;font-size:13px}
+.sort-row .spacer{flex:1}
+
+/* empty */
+.empty{
+  grid-column:1/-1;text-align:center;border:2px dashed #bcd6f3;border-radius:18px;
+  padding:52px 24px;background:rgba(255,255,255,.6);
+}
+.empty .ei{width:72px;height:72px;border-radius:18px;display:grid;place-items:center;margin:0 auto 18px;background:#e4f3ff;color:var(--brand-deep)}
+.empty .ei svg{width:38px;height:38px}
+.empty h3{margin:0 0 8px;font-size:20px;font-weight:900;color:var(--ink)}
+.empty p{margin:0;font-size:15px;font-weight:700;color:var(--ink-mute)}
+
+/* 관리자 대시보드 바 */
+.admin-bar{
+  display:flex;align-items:center;justify-content:space-between;gap:16px;flex-wrap:wrap;
+  background:linear-gradient(135deg,#0b6ea8,#0ea5a3);color:#fff;border-radius:20px;
+  padding:22px 26px;margin-bottom:26px;box-shadow:var(--shadow);
+}
+.admin-bar .ab-text .eyebrow{background:rgba(255,255,255,.18);border-color:rgba(255,255,255,.3);color:#fff}
+.admin-bar h2{margin:10px 0 2px;font-size:24px;font-weight:900}
+.admin-bar p{margin:0;font-size:14px;font-weight:700;color:#e3f6ff}
+.admin-bar .ab-actions{display:flex;gap:10px;flex-wrap:wrap}
+.admin-bar .btn{background:#fff;color:var(--brand-deep);border-color:#fff}
+.admin-bar .btn.outline{background:rgba(255,255,255,.12);color:#fff;border-color:rgba(255,255,255,.45)}
+.admin-bar .btn:hover{filter:brightness(1.04)}
+
+/* footer */
+footer{
+  max-width:1180px;margin:30px auto 0;padding:24px;border-top:1px solid var(--line);
+  display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap;
+  font-size:13px;font-weight:700;color:var(--ink-mute);
+}
+
+/* ---------- Dialog ---------- */
+dialog{
+  border:none;border-radius:22px;padding:0;width:min(560px,94vw);
+  background:var(--surface);color:var(--ink);box-shadow:0 30px 80px rgba(12,40,80,.35);
+  max-height:92dvh;overflow:auto;
+}
+dialog::backdrop{background:rgba(10,30,60,.45);backdrop-filter:blur(3px)}
+.dlg-head{display:flex;align-items:flex-start;gap:14px;padding:26px 26px 0}
+.dlg-head .dlg-ic{width:48px;height:48px;border-radius:14px;display:grid;place-items:center;background:#e4f3ff;color:var(--brand-deep);flex:none}
+.dlg-head .dlg-ic svg{width:26px;height:26px}
+.dlg-head h2{margin:0;font-size:21px;font-weight:900}
+.dlg-head p{margin:4px 0 0;font-size:14px;font-weight:700;color:var(--ink-mute)}
+form{padding:20px 26px 26px}
+label.fld{display:block;font-size:14px;font-weight:900;margin:16px 0 7px;color:var(--ink)}
+label.fld:first-of-type{margin-top:8px}
+input[type=text],input[type=password],input[type=url],select,textarea{
+  width:100%;padding:12px 14px;border:2px solid var(--line);border-radius:12px;
+  background:var(--surface);font-weight:700;font-size:16px;
+}
+input:focus,select:focus,textarea:focus{border-color:var(--brand)}
+textarea{resize:vertical;min-height:72px}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+.tabs{display:flex;gap:8px;margin:18px 0 6px;flex-wrap:wrap}
+.tabs button{flex:1;min-width:120px;border:2px solid var(--line);border-radius:11px;padding:10px;background:var(--surface);font-weight:800;font-size:14px}
+.tabs button.active{background:linear-gradient(135deg,var(--brand),var(--brand-deep));color:#fff;border-color:transparent}
+.actions{display:flex;justify-content:flex-end;gap:10px;margin-top:22px}
+.err{color:var(--danger);font-size:14px;font-weight:800;margin:12px 0 0;min-height:1px}
+.ok{color:var(--brand-ink);font-size:14px;font-weight:800;margin:12px 0 0}
+.dlg-hint{font-size:13px;font-weight:700;color:var(--ink-mute);margin:8px 0 0}
+
+/* toast */
+#toast{
+  position:fixed;left:50%;bottom:26px;transform:translateX(-50%) translateY(20px);
+  background:var(--ink);color:#fff;font-weight:800;font-size:15px;
+  padding:13px 22px;border-radius:14px;box-shadow:var(--shadow);z-index:90;
+  opacity:0;transition:opacity .25s,transform .25s;pointer-events:none;max-width:90vw;
+}
+#toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
+
+/* responsive */
+@media(max-width:900px){
+  .hero-art{width:220px;opacity:.5;right:6px}
+  .cards{grid-template-columns:repeat(2,minmax(0,1fr))}
+}
+@media(max-width:640px){
+  nav{padding:12px 16px}
+  .brand{font-size:17px}
+  .brand .logo{width:40px;height:40px}
+  main{padding:20px 16px 56px}
+  .hero{padding:30px 22px}
+  .hero-art{display:none}
+  .hero h1{font-size:28px}
+  .hero p{font-size:15px}
+  .grade-grid{grid-template-columns:1fr;gap:12px}
+  .cards{grid-template-columns:1fr}
+  .grid2{grid-template-columns:1fr}
+  footer{flex-direction:column}
+}
+@media(prefers-reduced-motion:reduce){*{transition:none !important}}
+</style>
+</head>
+<body>
+<header>
+  <nav>
+    <div class="brand">
+      <span class="logo" aria-hidden="true">
+        <svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M9 3h6M10 3v6.5L5.2 18a2 2 0 0 0 1.8 3h10a2 2 0 0 0 1.8-3L14 9.5V3"/>
+          <path d="M7.5 15h9"/><circle cx="10" cy="17.5" r="1"/><circle cx="14" cy="18.5" r="1"/>
+        </svg>
+      </span>
+      <span>애림쌤의 중학교 과학 교실<small>ERIM SCIENCE CLASSROOM</small></span>
+    </div>
+    <div class="nav-actions">
+      <button id="studentViewBtn" class="btn ghost hidden" type="button">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 5c-7 0-10 7-10 7s3 7 10 7 10-7 10-7-3-7-10-7Z"/><circle cx="12" cy="12" r="3"/></svg>
+        학생 화면
+      </button>
+      <button id="lockBtn" type="button" aria-label="관리자 페이지 열기" title="관리자 페이지">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" id="lockIcon">
+          <rect x="4" y="10" width="16" height="11" rx="2"/><path d="M8 10V7a4 4 0 0 1 8 0v3"/><circle cx="12" cy="15.5" r="1.4"/>
+        </svg>
+      </button>
+    </div>
+  </nav>
+</header>
+
+<main>
+  <!-- ============ 관리자 대시보드 바 (관리자 모드에서만 표시) ============ -->
+  <section id="adminBar" class="admin-bar hidden" aria-label="관리자 대시보드">
+    <div class="ab-text">
+      <span class="eyebrow">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 15a3 3 0 1 0 0-6 3 3 0 0 0 0 6Z"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 1 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 1 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 1 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9c.2.63.77 1.09 1.51 1H21a2 2 0 1 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1Z"/></svg>
+        관리자 모드
+      </span>
+      <h2>수업 자료 관리</h2>
+      <p>학년·분야별 수업 자료를 추가·수정·삭제하고 순서를 바꿀 수 있어요.</p>
+    </div>
+    <div class="ab-actions">
+      <button id="addBtn" class="btn primary" type="button">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 5v14M5 12h14"/></svg>
+        수업 항목 추가
+      </button>
+      <button id="pwBtn" class="btn outline" type="button">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="10" width="16" height="11" rx="2"/><path d="M8 10V7a4 4 0 0 1 8 0v3"/></svg>
+        비밀번호 변경
+      </button>
+      <button id="logoutBtn" class="btn outline" type="button">로그아웃</button>
+    </div>
+  </section>
+
+  <!-- ============ 히어로 (학생 화면) ============ -->
+  <section id="hero" class="hero">
+    <div class="hero-text">
+      <span class="eyebrow">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="2"/><path d="M12 2a10 10 0 0 0-3 .46"/><ellipse cx="12" cy="12" rx="10" ry="4.2" transform="rotate(60 12 12)"/><ellipse cx="12" cy="12" rx="10" ry="4.2" transform="rotate(120 12 12)"/><ellipse cx="12" cy="12" rx="10" ry="4.2"/></svg>
+        2022 개정 교육과정 · 비상교육 기반
+      </span>
+      <h1>오늘은 어떤 과학을<br><em>탐구해 볼까요?</em></h1>
+      <p>관찰하고, 실험하고, 원리를 발견하는 중학교 과학.<br>학년과 분야를 골라 나에게 꼭 맞는 수업 자료를 시작해 보세요.</p>
+      <div class="hero-pills">
+        <span>중학교 1·2·3학년</span>
+        <span>물리 · 화학 · 지구과학 · 생물</span>
+        <span>웹앱 학습 자료</span>
+      </div>
+    </div>
+    <svg class="hero-art" viewBox="0 0 300 300" fill="none" aria-hidden="true">
+      <circle cx="150" cy="150" r="118" stroke="#9bd3f5" stroke-width="2" stroke-dasharray="4 10"/>
+      <ellipse cx="150" cy="150" rx="118" ry="44" stroke="#5bb8e8" stroke-width="2.5"/>
+      <ellipse cx="150" cy="150" rx="118" ry="44" stroke="#17b0a7" stroke-width="2.5" transform="rotate(60 150 150)"/>
+      <ellipse cx="150" cy="150" rx="118" ry="44" stroke="#f59e0b" stroke-width="2.5" transform="rotate(120 150 150)"/>
+      <circle cx="150" cy="150" r="20" fill="#0b6ea8"/>
+      <circle cx="150" cy="150" r="11" fill="#0ea5a3"/>
+      <circle cx="268" cy="150" r="7" fill="#2563eb"/>
+      <circle cx="91" cy="252" r="7" fill="#ea7a16"/>
+      <circle cx="91" cy="48" r="7" fill="#7c3aed"/>
+      <!-- 플라스크 -->
+      <g transform="translate(206 196)">
+        <path d="M6 2h14M9 2v12L2 30a3 3 0 0 0 2.7 4.5h16.6A3 3 0 0 0 24 30L17 14V2" stroke="#16a34a" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" fill="#d9fbe6"/>
+        <circle cx="10" cy="26" r="1.6" fill="#16a34a"/><circle cx="16" cy="29" r="1.6" fill="#16a34a"/>
+      </g>
+    </svg>
+  </section>
+
+  <!-- ============ 학년 선택 ============ -->
+  <section id="gradeBlock" class="block">
+    <div class="step-head"><span class="step-num">STEP 1</span><h2>학년을 선택하세요</h2></div>
+    <div class="grade-grid" id="gradeGrid" role="group" aria-label="학년 선택">
+      <button class="grade-btn" type="button" data-grade="1" aria-pressed="false">
+        <span class="gtag">GRADE 01</span>
+        <span class="gname"><span class="gicon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M13 2 4.5 13.5H11l-1 8.5L19.5 10H13l0-8Z"/></svg></span>1학년</span>
+        <span class="gdesc">과학의 기초 · 힘과 운동, 물질의 세계 입문</span>
+      </button>
+      <button class="grade-btn" type="button" data-grade="2" aria-pressed="false">
+        <span class="gtag">GRADE 02</span>
+        <span class="gname"><span class="gicon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 3h6M10 3v5l-5 9a2 2 0 0 0 1.8 3h10.4a2 2 0 0 0 1.8-3l-5-9V3"/></svg></span>2학년</span>
+        <span class="gdesc">물질의 변화 · 전기, 생물의 구조와 기능</span>
+      </button>
+      <button class="grade-btn" type="button" data-grade="3" aria-pressed="false">
+        <span class="gtag">GRADE 03</span>
+        <span class="gname"><span class="gicon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2a10 10 0 1 0 10 10"/><path d="M12 2v10l7 3"/></svg></span>3학년</span>
+        <span class="gdesc">운동과 에너지 · 화학 반응, 생식과 유전</span>
+      </button>
+    </div>
+  </section>
+
+  <!-- ============ 분야 선택 ============ -->
+  <section id="fieldBlock" class="block">
+    <div class="step-head"><span class="step-num">STEP 2</span><h2>탐구 분야를 골라 보세요</h2></div>
+    <div class="field-grid" id="fieldGrid" role="group" aria-label="분야 선택">
+      <button class="field-btn selected" type="button" data-field="" aria-pressed="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7" rx="1.5"/><rect x="14" y="3" width="7" height="7" rx="1.5"/><rect x="3" y="14" width="7" height="7" rx="1.5"/><rect x="14" y="14" width="7" height="7" rx="1.5"/></svg>전체</button>
+      <button class="field-btn" type="button" data-field="물리" aria-pressed="false"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M13 2 4.5 13.5H11l-1 8.5L19.5 10H13l0-8Z"/></svg>물리</button>
+      <button class="field-btn" type="button" data-field="화학" aria-pressed="false"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 3h6M10 3v5l-5 9a2 2 0 0 0 1.8 3h10.4a2 2 0 0 0 1.8-3l-5-9V3"/><path d="M7 15h10"/></svg>화학</button>
+      <button class="field-btn" type="button" data-field="지구과학" aria-pressed="false"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M2 12h20M12 2a15 15 0 0 1 0 20M12 2a15 15 0 0 0 0 20"/></svg>지구과학</button>
+      <button class="field-btn" type="button" data-field="생물" aria-pressed="false"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2C7 7 7 13 12 22c5-9 5-15 0-20Z"/><path d="M12 6v12"/></svg>생물</button>
+    </div>
+  </section>
+
+  <!-- ============ 검색 & 목록 ============ -->
+  <section class="block">
+    <!-- 관리자용 필터 -->
+    <div id="adminFilters" class="toolbar hidden" style="margin-bottom:14px">
+      <select id="adminGrade" aria-label="학년 필터" style="max-width:160px">
+        <option value="">전체 학년</option><option value="1">1학년</option><option value="2">2학년</option><option value="3">3학년</option>
+      </select>
+      <select id="adminField" aria-label="분야 필터" style="max-width:160px">
+        <option value="">전체 분야</option><option>물리</option><option>화학</option><option>지구과학</option><option>생물</option>
+      </select>
+    </div>
+
+    <div class="toolbar">
+      <div class="search-wrap">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="7"/><path d="m21 21-4.3-4.3"/></svg>
+        <input id="search" type="search" placeholder="수업 자료 검색 (예: 광합성, 전기회로)" aria-label="수업 자료 검색" disabled>
+      </div>
+    </div>
+    <p id="searchHint" class="hint">학년을 먼저 선택하면 수업 자료를 볼 수 있어요.</p>
+
+    <div class="list-head">
+      <h2><span id="listTitle">수업 자료</span><span id="count" class="count-pill">0</span></h2>
+      <button id="clearSearch" class="btn sm ghost hidden" type="button">검색 지우기</button>
+    </div>
+    <p id="sortHint" class="hint hidden">← → 버튼으로 카드 순서를 바꾸면 자동으로 저장됩니다.</p>
+
+    <div id="cards" class="cards" aria-live="polite"></div>
+  </section>
+
+  <footer>
+    <span>애림쌤의 중학교 과학 교실 · 호기심이 탐구가 되는 곳</span>
+    <span>2022 개정 교육과정 · 비상교육 교과서 기반</span>
+  </footer>
+</main>
+
+<!-- ============ 로그인 다이얼로그 ============ -->
+<dialog id="loginDlg" aria-labelledby="loginTitle">
+  <div class="dlg-head">
+    <span class="dlg-ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="10" width="16" height="11" rx="2"/><path d="M8 10V7a4 4 0 0 1 8 0v3"/><circle cx="12" cy="15.5" r="1.4"/></svg></span>
+    <div><h2 id="loginTitle">관리자 로그인</h2><p>수업 자료를 관리하려면 비밀번호를 입력하세요.</p></div>
+  </div>
+  <form id="loginForm">
+    <label class="fld" for="pwInput">관리자 비밀번호</label>
+    <input id="pwInput" type="password" autocomplete="current-password" placeholder="비밀번호 입력" required>
+    <p class="dlg-hint">최초 비밀번호는 <b>1004</b> 입니다. 로그인 후 변경할 수 있어요.</p>
+    <p id="loginErr" class="err" role="alert"></p>
+    <div class="actions">
+      <button type="button" class="btn" data-close>취소</button>
+      <button type="submit" class="btn primary">로그인</button>
+    </div>
+  </form>
+</dialog>
+
+<!-- ============ 비밀번호 변경 다이얼로그 ============ -->
+<dialog id="pwDlg" aria-labelledby="pwTitle">
+  <div class="dlg-head">
+    <span class="dlg-ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="10" width="16" height="11" rx="2"/><path d="M8 10V7a4 4 0 0 1 8 0v3"/><path d="m9 15 2 2 4-4"/></svg></span>
+    <div><h2 id="pwTitle">비밀번호 변경</h2><p>관리자 비밀번호를 새로 설정합니다.</p></div>
+  </div>
+  <form id="pwForm">
+    <label class="fld" for="curPw">현재 비밀번호</label>
+    <input id="curPw" type="password" autocomplete="current-password" placeholder="현재 비밀번호" required>
+    <label class="fld" for="newPw">새 비밀번호</label>
+    <input id="newPw" type="password" autocomplete="new-password" placeholder="새 비밀번호 (4자 이상)" required>
+    <label class="fld" for="newPw2">새 비밀번호 확인</label>
+    <input id="newPw2" type="password" autocomplete="new-password" placeholder="새 비밀번호 다시 입력" required>
+    <p id="pwErr" class="err" role="alert"></p>
+    <div class="actions">
+      <button type="button" class="btn" data-close>취소</button>
+      <button type="submit" class="btn primary">변경하기</button>
+    </div>
+  </form>
+</dialog>
+
+<!-- ============ 항목 추가/수정 다이얼로그 ============ -->
+<dialog id="itemDlg" aria-labelledby="itemTitle">
+  <div class="dlg-head">
+    <span class="dlg-ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20h9"/><path d="M16.5 3.5a2.1 2.1 0 0 1 3 3L7 19l-4 1 1-4Z"/></svg></span>
+    <div><h2 id="itemTitle">수업 항목 추가</h2><p>학년과 분야를 지정하면 학생 화면에 표시됩니다.</p></div>
+  </div>
+  <form id="itemForm">
+    <label class="fld" for="fTitle">수업 제목</label>
+    <input id="fTitle" name="title" type="text" maxlength="80" placeholder="예: 광합성과 식물의 에너지" required>
+
+    <div class="grid2">
+      <div>
+        <label class="fld" for="fGrade">대상 학년</label>
+        <select id="fGrade" name="grade" required>
+          <option value="1">1학년</option><option value="2">2학년</option><option value="3">3학년</option>
+        </select>
+      </div>
+      <div>
+        <label class="fld" for="fField">탐구 분야</label>
+        <select id="fField" name="field" required>
+          <option value="">분야 선택</option>
+          <option>물리</option><option>화학</option><option>지구과학</option><option>생물</option>
+        </select>
+      </div>
+    </div>
+
+    <label class="fld" for="fDesc">수업 안내 <span style="font-weight:700;color:var(--ink-mute)">(선택)</span></label>
+    <textarea id="fDesc" name="description" maxlength="300" rows="2" placeholder="학습 목표나 수업 내용을 간단히 적어 주세요."></textarea>
+
+    <div class="tabs" role="group" aria-label="자료 종류">
+      <button type="button" data-mode="link" class="active">웹앱 링크</button>
+      <button type="button" data-mode="content">내용 작성</button>
+    </div>
+    <div id="linkBox">
+      <label class="fld" for="fUrl">웹앱 주소 (링크)</label>
+      <input id="fUrl" name="url" type="url" placeholder="https://">
+      <p class="dlg-hint">외부 웹앱 학습 자료는 새 창에서 열립니다.</p>
+    </div>
+    <div id="contentBox" class="hidden">
+      <label class="fld" for="fContent">수업 내용</label>
+      <textarea id="fContent" name="content" maxlength="8000" rows="6" placeholder="학습 질문, 준비물, 활동 순서 등을 작성하세요."></textarea>
+      <p class="dlg-hint">작성한 내용은 학생이 카드를 눌렀을 때 새 창에 표시됩니다.</p>
+    </div>
+
+    <p id="itemErr" class="err" role="alert"></p>
+    <div class="actions">
+      <button type="button" class="btn" data-close>취소</button>
+      <button type="submit" class="btn primary" id="itemSave">추가하기</button>
+    </div>
+  </form>
+</dialog>
+
+<div id="toast" role="status"></div>
+
+<script>
+/* =======================================================================
+   애림쌤의 중학교 과학 교실 — localStorage 기반 단독 웹앱
+   ======================================================================= */
+(function(){
+"use strict";
+
+const LS_ITEMS = "erim-science-items-v1";
+const LS_PW    = "erim-science-pw-v1";
+const DEFAULT_PW = "1004";
+
+const $  = (s,el=document)=>el.querySelector(s);
+const $$ = (s,el=document)=>[...el.querySelectorAll(s)];
+const esc = s => String(s??"").replace(/[&<>"']/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
+const uid = () => Date.now().toString(36) + Math.random().toString(36).slice(2,7);
+
+const FIELD_META = {
+  "물리":    {cls:"f-physics", icon:'<path d="M13 2 4.5 13.5H11l-1 8.5L19.5 10H13l0-8Z"/>'},
+  "화학":    {cls:"f-chem",    icon:'<path d="M9 3h6M10 3v5l-5 9a2 2 0 0 0 1.8 3h10.4a2 2 0 0 0 1.8-3l-5-9V3"/><path d="M7 15h10"/>'},
+  "지구과학":{cls:"f-earth",   icon:'<circle cx="12" cy="12" r="10"/><path d="M2 12h20M12 2a15 15 0 0 1 0 20M12 2a15 15 0 0 0 0 20"/>'},
+  "생물":    {cls:"f-bio",     icon:'<path d="M12 2C7 7 7 13 12 22c5-9 5-15 0-20Z"/><path d="M12 6v12"/>'}
+};
+const fieldIconSvg = f => {
+  const m = FIELD_META[f];
+  const inner = m ? m.icon : '<circle cx="12" cy="12" r="9"/>';
+  return '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round">'+inner+'</svg>';
+};
+const fieldCls = f => (FIELD_META[f]?.cls) || "f-all";
+
+/* ---------- 상태 ---------- */
+let items = [];
+let admin = false;
+let selectedGrade = 0;     // 0 = 미선택
+let selectedField = "";    // "" = 전체
+
+/* ---------- 저장소 ---------- */
+function loadItems(){
+  try{
+    const raw = localStorage.getItem(LS_ITEMS);
+    if(raw){ items = JSON.parse(raw); return; }
+  }catch(e){}
+  items = seedItems();
+  saveItems();
+}
+function saveItems(){
+  try{ localStorage.setItem(LS_ITEMS, JSON.stringify(items)); }catch(e){ toast("저장 공간이 부족합니다."); }
+}
+function getPw(){ try{ return localStorage.getItem(LS_PW) || DEFAULT_PW; }catch(e){ return DEFAULT_PW; } }
+function setPw(p){ try{ localStorage.setItem(LS_PW, p); }catch(e){} }
+
+/* ---------- 기본 시드 (2022 개정 · 비상교육 단원 기반 예시) ---------- */
+function seedItems(){
+  const S = [
+    // 1학년
+    [1,"지구과학","지권의 변화","암석의 순환과 지구 내부 구조를 탐구해요."],
+    [1,"화학","기체의 성질","압력·온도에 따른 기체 부피 변화를 알아봐요."],
+    [1,"화학","물질의 상태 변화","고체·액체·기체와 상태 변화 원리를 배워요."],
+    [1,"물리","빛과 파동","빛의 반사·굴절과 거울·렌즈의 성질을 탐구해요."],
+    [1,"생물","생물의 다양성","생물을 분류하고 생물 다양성의 의미를 이해해요."],
+    // 2학년
+    [2,"화학","물질의 구성","원소·원자·분자와 이온을 배워요."],
+    [2,"물리","전기와 자기","전기 회로와 자기장의 성질을 탐구해요."],
+    [2,"생물","식물과 에너지","광합성과 식물의 호흡을 탐구해요."],
+    [2,"생물","동물과 에너지","소화·순환·호흡·배설 과정을 이해해요."],
+    [2,"지구과학","태양계","태양계 구성 천체와 지구의 운동을 배워요."],
+    // 3학년
+    [3,"물리","운동과 에너지","속력·가속도와 역학적 에너지를 탐구해요."],
+    [3,"화학","화학 반응의 규칙과 에너지 변화","화학 반응식과 질량 보존 법칙을 배워요."],
+    [3,"생물","생식과 유전","세포 분열과 멘델의 유전 법칙을 탐구해요."],
+    [3,"지구과학","별과 우주","별의 특성과 우주 팽창을 알아봐요."],
+    [3,"물리","에너지 전환과 보존","여러 에너지의 전환과 보존을 탐구해요."]
+  ];
+  return S.map(([g,f,t,d],i)=>({
+    id: uid(),
+    grade: g, field: f, title: t, description: d,
+    type: "content",
+    url: "",
+    content: t + " 단원의 학습 내용입니다.\n\n여기에 관리자 페이지에서 수업 자료(웹앱 링크 또는 내용)를 추가해 발전시켜 나갈 수 있습니다.",
+    order: i
+  }));
+}
+
+/* ---------- 렌더 ---------- */
+function visibleItems(){
+  const q = $("#search").value.trim().toLowerCase();
+  const grade = admin ? Number($("#adminGrade").value) : selectedGrade;
+  const field = admin ? $("#adminField").value : selectedField;
+  return items
+    .slice()
+    .sort((a,b)=>(a.order??0)-(b.order??0))
+    .filter(a => (!grade || Number(a.grade)===grade)
+      && (!field || a.field===field)
+      && (!q || ((a.title||"")+" "+(a.description||"")).toLowerCase().includes(q)));
+}
+
+function render(){
+  const ready = admin || !!selectedGrade;
+  const q = $("#search").value.trim();
+  const list = visibleItems();
+
+  // 모드 토글
+  $("#adminBar").classList.toggle("hidden", !admin);
+  $("#adminFilters").classList.toggle("hidden", !admin);
+  $("#hero").classList.toggle("hidden", admin);
+  $("#gradeBlock").classList.toggle("hidden", admin);
+  $("#fieldBlock").classList.toggle("hidden", admin);
+  $("#studentViewBtn").classList.toggle("hidden", !admin);
+  $("#lockBtn").classList.toggle("admin-on", admin);
+  $("#lockBtn").setAttribute("aria-label", admin ? "관리자 모드 사용 중" : "관리자 페이지 열기");
+  $("#sortHint").classList.toggle("hidden", !admin || !!q);
+
+  // 학년/분야 버튼 상태
+  $$("[data-grade]").forEach(b=>{
+    const on = Number(b.dataset.grade)===selectedGrade;
+    b.classList.toggle("selected", on); b.setAttribute("aria-pressed", on);
+  });
+  $$("#fieldGrid [data-field]").forEach(b=>{
+    const on = b.dataset.field===selectedField;
+    b.classList.toggle("selected", on); b.setAttribute("aria-pressed", on);
+    b.disabled = !selectedGrade && !admin;
+  });
+
+  // 검색 활성화
+  $("#search").disabled = !ready;
+  $("#clearSearch").classList.toggle("hidden", !q);
+
+  // 타이틀/안내
+  $("#listTitle").textContent = admin
+    ? "등록된 수업 자료"
+    : selectedGrade ? selectedGrade+"학년 "+(selectedField||"전체")+" 수업 자료" : "수업 자료";
+  $("#count").textContent = ready ? list.length : 0;
+  $("#searchHint").textContent = admin
+    ? "관리 필터 안에서 제목과 안내를 검색합니다."
+    : selectedGrade
+      ? selectedGrade+"학년 · "+(selectedField||"전체 분야")+" 안에서 검색해요."
+      : "학년을 먼저 선택하면 수업 자료를 볼 수 있어요.";
+
+  // 카드
+  const cards = $("#cards");
+  if(!ready){
+    cards.innerHTML = emptyBox("①","나의 학년에서 시작해요","위 STEP 1에서 1·2·3학년 중 나의 학년을 선택하세요.");
+    return;
+  }
+  if(!list.length){
+    cards.innerHTML = admin
+      ? emptyBox("＋","아직 등록된 자료가 없어요","오른쪽 위 ‘수업 항목 추가’ 버튼으로 수업 자료를 등록해 보세요.")
+      : emptyBox("⌕","조건에 맞는 자료가 없어요","검색어를 지우거나 다른 분야를 골라 보세요.");
+    return;
+  }
+
+  cards.innerHTML = list.map((a,idx)=>{
+    const cls = fieldCls(a.field);
+    const isExternal = a.type==="link" && a.url;
+    const href = isExternal ? esc(a.url) : "#";
+    const target = isExternal ? ' target="_blank" rel="noopener noreferrer"' : ' data-view="'+esc(a.id)+'"';
+    const arrow = isExternal
+      ? '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M7 17 17 7M9 7h8v8"/></svg>'
+      : '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg>';
+    const sortRow = admin ? (
+      '<div class="sort-row">'+
+        '<button class="btn sm" type="button" data-move="-1" data-id="'+esc(a.id)+'" aria-label="앞으로 이동" '+(idx===0?'disabled':'')+'>←</button>'+
+        '<button class="btn sm" type="button" data-move="1" data-id="'+esc(a.id)+'" aria-label="뒤로 이동" '+(idx===list.length-1?'disabled':'')+'>→</button>'+
+        '<span class="spacer"></span>'+
+      '</div>'
+    ) : "";
+    const adminRow = admin ? (
+      '<div class="card-admin">'+
+        '<button class="btn sm" type="button" data-edit="'+esc(a.id)+'">수정</button>'+
+        '<button class="btn sm danger" type="button" data-del="'+esc(a.id)+'">삭제</button>'+
+      '</div>'
+    ) : "";
+    return '<article class="card '+cls+'" data-card="'+esc(a.id)+'">'+
+      sortRow+
+      '<div class="card-icon" aria-hidden="true">'+fieldIconSvg(a.field)+'</div>'+
+      '<div class="ctag"><b>'+Number(a.grade)+'학년</b> · '+esc(a.field||"분야 미지정")+'</div>'+
+      '<h3>'+esc(a.title)+'</h3>'+
+      '<p>'+esc(a.description||"수업 자료를 열어 학습을 시작하세요.")+'</p>'+
+      '<a class="go" href="'+href+'"'+target+'>수업 자료 열기 '+arrow+'</a>'+
+      adminRow+
+    '</article>';
+  }).join("");
+}
+function emptyBox(icon,title,desc){
+  return '<div class="empty"><div class="ei"><span style="font-size:34px;font-weight:900">'+esc(icon)+'</span></div>'+
+    '<h3>'+esc(title)+'</h3><p>'+esc(desc)+'</p></div>';
+}
+
+/* ---------- 내용형 자료 보기 (새 창) ---------- */
+function openContent(a){
+  const w = window.open("", "_blank");
+  if(!w){ toast("팝업이 차단되었습니다. 허용 후 다시 시도하세요."); return; }
+  const doc =
+    '<!doctype html><html lang="ko"><head><meta charset="utf-8">'+
+    '<meta name="viewport" content="width=device-width,initial-scale=1">'+
+    '<title>'+esc(a.title)+' · 애림쌤의 중학교 과학 교실</title>'+
+    '<style>body{margin:0;font:17px/1.75 "Pretendard","Noto Sans KR",system-ui,sans-serif;'+
+    'color:#0f2744;background:#f0f7ff;font-weight:600}'+
+    '.wrap{max-width:760px;margin:auto;padding:40px 24px 80px}'+
+    '.badge{display:inline-block;font-size:13px;font-weight:900;color:#065f5e;background:#d6f5f2;'+
+    'border:1px solid #a9e5e0;border-radius:999px;padding:6px 14px;margin-bottom:16px}'+
+    'h1{font-size:30px;font-weight:900;letter-spacing:-.8px;margin:0 0 20px}'+
+    '.content{background:#fff;border:1px solid #d4e4f7;border-radius:16px;padding:28px;'+
+    'white-space:pre-wrap;box-shadow:0 10px 30px rgba(16,55,100,.1);font-weight:700;color:#35507a}'+
+    'footer{margin-top:28px;font-size:13px;font-weight:700;color:#5b7399}</style></head><body>'+
+    '<div class="wrap"><span class="badge">'+Number(a.grade)+'학년 · '+esc(a.field)+'</span>'+
+    '<h1>'+esc(a.title)+'</h1>'+
+    '<div class="content">'+esc(a.content||a.description||"등록된 내용이 없습니다.")+'</div>'+
+    '<footer>애림쌤의 중학교 과학 교실 · 2022 개정 교육과정 비상교육 기반</footer></div></body></html>';
+  w.document.write(doc);
+  w.document.close();
+}
+
+/* ---------- Toast ---------- */
+let toastTimer;
+function toast(msg){
+  const t = $("#toast");
+  t.textContent = msg; t.classList.add("show");
+  clearTimeout(toastTimer);
+  toastTimer = setTimeout(()=>t.classList.remove("show"), 3200);
+}
+
+/* ---------- 학년/분야 선택 ---------- */
+$("#gradeGrid").addEventListener("click", e=>{
+  const b = e.target.closest("[data-grade]"); if(!b) return;
+  selectedGrade = Number(b.dataset.grade);
+  selectedField = "";
+  $("#search").value = "";
+  try{ sessionStorage.setItem("erim-grade", selectedGrade); }catch(e){}
+  render();
+});
+$("#fieldGrid").addEventListener("click", e=>{
+  const b = e.target.closest("[data-field]"); if(!b || b.disabled) return;
+  selectedField = b.dataset.field;
+  render();
+});
+$("#search").addEventListener("input", render);
+$("#clearSearch").addEventListener("click", ()=>{ $("#search").value=""; render(); });
+$("#adminGrade").addEventListener("change", render);
+$("#adminField").addEventListener("change", render);
+
+/* ---------- 카드 이벤트 (보기/수정/삭제/정렬) ---------- */
+$("#cards").addEventListener("click", async e=>{
+  // 내용형 보기
+  const view = e.target.closest("[data-view]");
+  if(view){ e.preventDefault(); const a = items.find(x=>x.id===view.dataset.view); if(a) openContent(a); return; }
+  if(!admin) return;
+  // 정렬
+  const mover = e.target.closest("[data-move]");
+  if(mover){ moveItem(mover.dataset.id, Number(mover.dataset.move)); return; }
+  // 수정
+  const ed = e.target.closest("[data-edit]");
+  if(ed){ openItemDlg(items.find(x=>x.id===ed.dataset.edit)); return; }
+  // 삭제
+  const del = e.target.closest("[data-del]");
+  if(del){
+    const a = items.find(x=>x.id===del.dataset.del);
+    if(a && confirm("‘"+a.title+"’ 수업 자료를 삭제할까요?")){
+      items = items.filter(x=>x.id!==a.id);
+      saveItems(); render(); toast("수업 자료를 삭제했어요.");
+    }
+  }
+});
+
+function moveItem(id, dir){
+  const list = visibleItems();
+  const idx = list.findIndex(x=>x.id===id);
+  const j = idx + dir;
+  if(idx<0 || j<0 || j>=list.length) return;
+  // 두 카드의 order 교환 (전체 items 기준 재정렬)
+  const a = list[idx], b = list[j];
+  const ao = a.order, bo = b.order;
+  a.order = bo; b.order = ao;
+  // order 중복 방지: 전체를 현재 정렬 순서대로 0..n 재부여
+  items.sort((x,y)=>(x.order??0)-(y.order??0)).forEach((it,i)=>it.order=i);
+  saveItems(); render(); toast("순서를 저장했어요.");
+}
+
+/* ---------- 관리자: 자물쇠 / 로그인 ---------- */
+$("#lockBtn").addEventListener("click", ()=>{
+  if(admin){ enterAdmin(); return; }   // 이미 관리자면 대시보드로
+  $("#loginErr").textContent = "";
+  $("#pwInput").value = "";
+  $("#loginDlg").showModal();
+  setTimeout(()=>$("#pwInput").focus(), 50);
+});
+$("#loginForm").addEventListener("submit", e=>{
+  e.preventDefault();
+  if($("#pwInput").value === getPw()){
+    $("#loginDlg").close();
+    enterAdmin();
+    toast("관리자 모드로 입장했어요.");
+  }else{
+    $("#loginErr").textContent = "비밀번호가 올바르지 않습니다.";
+  }
+});
+function enterAdmin(){
+  admin = true;
+  $("#search").value = "";
+  render();
+  window.scrollTo({top:0, behavior:"smooth"});
+}
+$("#studentViewBtn").addEventListener("click", ()=>{
+  admin = false; $("#search").value=""; render();
+  window.scrollTo({top:0, behavior:"smooth"});
+});
+$("#logoutBtn").addEventListener("click", ()=>{
+  admin = false; $("#search").value=""; render();
+  window.scrollTo({top:0, behavior:"smooth"});
+  toast("관리자 모드를 종료했어요.");
+});
+
+/* ---------- 비밀번호 변경 ---------- */
+$("#pwBtn").addEventListener("click", ()=>{
+  $("#pwForm").reset(); $("#pwErr").textContent="";
+  $("#pwDlg").showModal();
+});
+$("#pwForm").addEventListener("submit", e=>{
+  e.preventDefault();
+  const cur = $("#curPw").value, n1 = $("#newPw").value, n2 = $("#newPw2").value;
+  if(cur !== getPw()){ $("#pwErr").textContent="현재 비밀번호가 올바르지 않습니다."; return; }
+  if(n1.length < 4){ $("#pwErr").textContent="새 비밀번호는 4자 이상이어야 합니다."; return; }
+  if(n1 !== n2){ $("#pwErr").textContent="새 비밀번호가 서로 일치하지 않습니다."; return; }
+  setPw(n1);
+  $("#pwDlg").close();
+  toast("비밀번호를 변경했어요.");
+});
+
+/* ---------- 항목 추가/수정 ---------- */
+let editingId = null;
+let itemMode = "link";
+function setItemMode(m){
+  itemMode = m;
+  $("#linkBox").classList.toggle("hidden", m!=="link");
+  $("#contentBox").classList.toggle("hidden", m!=="content");
+  $$("#itemForm .tabs button").forEach(b=>b.classList.toggle("active", b.dataset.mode===m));
+}
+$$("#itemForm .tabs button").forEach(b=>b.addEventListener("click", ()=>setItemMode(b.dataset.mode)));
+
+function openItemDlg(a=null){
+  editingId = a?.id || null;
+  const f = $("#itemForm");
+  f.reset(); $("#itemErr").textContent = "";
+  $("#itemTitle").textContent = a ? "수업 항목 수정" : "수업 항목 추가";
+  $("#itemSave").textContent  = a ? "수정 저장" : "추가하기";
+  f.title.value = a?.title || "";
+  f.description.value = a?.description || "";
+  f.grade.value = String(a?.grade || Number($("#adminGrade").value) || 1);
+  f.field.value = a?.field || $("#adminField").value || "";
+  f.url.value = a?.type==="link" ? (a.url||"") : "";
+  f.content.value = a?.content || "";
+  setItemMode(a ? (a.type==="link" ? "link" : "content") : "link");
+  $("#itemDlg").showModal();
+  setTimeout(()=>f.title.focus(), 50);
+}
+$("#addBtn").addEventListener("click", ()=>openItemDlg());
+
+$("#itemForm").addEventListener("submit", e=>{
+  e.preventDefault();
+  const f = e.target;
+  const title = f.title.value.trim();
+  const field = f.field.value;
+  if(!title){ $("#itemErr").textContent="수업 제목을 입력하세요."; return; }
+  if(!field){ $("#itemErr").textContent="탐구 분야를 선택하세요."; return; }
+  let url="", content="";
+  if(itemMode==="link"){
+    url = f.url.value.trim();
+    if(!url){ $("#itemErr").textContent="웹앱 주소(링크)를 입력하세요."; return; }
+    if(!/^https?:\/\//i.test(url)){ $("#itemErr").textContent="링크는 http:// 또는 https:// 로 시작해야 합니다."; return; }
+  }else{
+    content = f.content.value.trim();
+    if(!content){ $("#itemErr").textContent="수업 내용을 작성하세요."; return; }
+  }
+
+  if(editingId){
+    const a = items.find(x=>x.id===editingId);
+    if(a){
+      Object.assign(a, {
+        title, field, grade:Number(f.grade.value),
+        description:f.description.value.trim(),
+        type:itemMode, url, content
+      });
+    }
+    toast("수정 내용을 저장했어요.");
+  }else{
+    const maxOrder = items.reduce((m,x)=>Math.max(m, x.order??0), -1);
+    items.push({
+      id:uid(), title, field, grade:Number(f.grade.value),
+      description:f.description.value.trim(),
+      type:itemMode, url, content, order:maxOrder+1
+    });
+    toast("새 수업 자료를 추가했어요.");
+    // 추가한 항목이 바로 보이도록 필터 맞춤
+    $("#adminGrade").value = f.grade.value;
+    $("#adminField").value = field;
+  }
+  saveItems();
+  $("#itemDlg").close();
+  render();
+});
+
+/* ---------- 다이얼로그 닫기 공통 ---------- */
+$$("[data-close]").forEach(b=>b.addEventListener("click", ()=>b.closest("dialog").close()));
+$$("dialog").forEach(d=>d.addEventListener("click", e=>{
+  // 백드롭 클릭 시 닫기
+  if(e.target===d){ const r=d.getBoundingClientRect();
+    if(e.clientX<r.left||e.clientX>r.right||e.clientY<r.top||e.clientY>r.bottom) d.close(); }
+}));
+
+/* ---------- 초기화 ---------- */
+function init(){
+  loadItems();
+  try{
+    const g = Number(sessionStorage.getItem("erim-grade"));
+    if([1,2,3].includes(g)) selectedGrade = g;
+  }catch(e){}
+  render();
+}
+init();
+
+})();
+</script>
+</body>
+</html>
